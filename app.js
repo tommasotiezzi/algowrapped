@@ -191,15 +191,16 @@ function populateWrapped() {
   console.log('Total rosters:', data.scout.total_rosters);
   console.log('Hidden gems:', data.scout.hidden_gems);
   
-  // Slide 2: Performance (overperformance vs media ruolo)
-  const perfPercentile = data.percentiles.performance;
-  $('#stat-fvm').textContent = `Top ${100 - perfPercentile}%`;
-  $('#bar-fvm').style.setProperty('--fill', `${perfPercentile}%`);
-  $('#percentile-fvm-text').textContent = `La tua rosa overperforma vs ${perfPercentile}% delle altre`;
+  // Slide 2: Performance Rosa (overperformance)
+  const perf = data.performance;
+  const overSign = parseFloat(perf.total_overperf) >= 0 ? '+' : '';
+  $('#stat-fvm').textContent = perf.verdict;
+  $('#bar-fvm').style.setProperty('--fill', `${Math.min(100, Math.max(0, 50 + parseFloat(perf.avg_overperf) * 50))}%`);
+  $('#percentile-fvm-text').textContent = `${overSign}${perf.total_overperf} overperf totale | ${perf.overperformers}↑ vs ${perf.underperformers}↓`;
   
-  // Slide 3: Stats rosa
+  // Slide 3: Gol + Assist
   animateNumber($('#stat-fm'), data.stats.total_goals + data.stats.total_assists);
-  $('#bar-fm').style.setProperty('--fill', `${100 - data.percentiles.malus}%`);
+  $('#bar-fm').style.setProperty('--fill', '50%');
   $('#percentile-fm-text').textContent = `${data.stats.total_goals} gol + ${data.stats.total_assists} assist`;
   
   // Slide 4: Top Performer
@@ -238,8 +239,8 @@ function populateWrapped() {
     $('#malus-king-name').textContent = 'Nessun malus!';
     $('#malus-king-stats').textContent = 'Rosa disciplinatissima';
   }
-  $('#bar-malus').style.setProperty('--fill', `${data.percentiles.malus}%`);
-  $('#percentile-malus-text').textContent = `Top ${data.percentiles.malus}% malus (meno è meglio!)`;
+  $('#bar-malus').style.setProperty('--fill', `${Math.min(100, data.stats.total_malus * 5)}%`);
+  $('#percentile-malus-text').textContent = `Totale: -${data.stats.total_malus.toFixed(1)} malus dalla rosa`;
   
   // Slide 8: Scout Rating
   animateNumber($('#scout-score'), Math.round(data.scout.score));
@@ -296,8 +297,8 @@ function populateWrapped() {
       <div class="label">Cartellini</div>
     </div>
     <div class="summary-item">
-      <div class="value">Top ${100 - data.percentiles.performance}%</div>
-      <div class="label">Performance</div>
+      <div class="value">${parseFloat(data.performance.avg_overperf) >= 0 ? '+' : ''}${data.performance.avg_overperf}</div>
+      <div class="label">Avg Overperf</div>
     </div>
     <div class="summary-item">
       <div class="value">${Math.round(data.scout.score)}</div>
