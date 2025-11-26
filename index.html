@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fantacalcio Wrapped 2025</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ============ SCREEN 1: INPUT COGNITO ID ============ -->
+  <section id="input-screen" class="input-screen">
+    <h1 class="logo">Fantacalcio Wrapped</h1>
+    <p class="subtitle">Scopri come è andata la tua stagione</p>
+    
+    <div class="input-group">
+      <label for="cognito-input">Il tuo Cognito ID</label>
+      <input type="text" id="cognito-input" placeholder="es. abc123-def456-...">
+      <button id="find-rosters-btn" class="btn">Trova le mie rose</button>
+      <div id="error-msg" class="error" style="display: none;"></div>
+    </div>
+
+    <!-- Lista rose (appare dopo) -->
+    <ul id="roster-list" class="roster-list" style="display: none;"></ul>
+  </section>
+
+  <!-- ============ WRAPPED SLIDES ============ -->
+  <div id="wrapped-container" class="wrapped-container">
+    
+    <!-- Close button -->
+    <button id="close-btn" class="close-btn">✕</button>
+
+    <!-- Slide 1: Intro -->
+    <div class="slide slide-1" data-slide="0">
+      <span class="slide-label">Il tuo</span>
+      <h2 class="slide-title">Fantacalcio Wrapped</h2>
+      <p class="slide-subtitle">Scopri i numeri della tua stagione</p>
+    </div>
+
+    <!-- Slide 2: Performance Rosa -->
+    <div class="slide slide-2" data-slide="1">
+      <span class="slide-label">Performance della tua rosa</span>
+      <div class="slide-value" id="stat-fvm">-</div>
+      <p class="slide-subtitle">vs media per ruolo</p>
+      <div class="percentile-bar">
+        <div class="percentile-fill" id="bar-fvm"></div>
+      </div>
+      <p class="slide-subtitle" id="percentile-fvm-text">Top X%</p>
+    </div>
+
+    <!-- Slide 3: Gol + Assist -->
+    <div class="slide slide-3" data-slide="2">
+      <span class="slide-label">Gol + Assist totali</span>
+      <div class="slide-value" id="stat-fm">0</div>
+      <p class="slide-subtitle" id="percentile-fm-text">dalla tua rosa</p>
+      <div class="percentile-bar">
+        <div class="percentile-fill" id="bar-fm"></div>
+      </div>
+    </div>
+
+    <!-- Slide 4: Top Performer -->
+    <div class="slide slide-4" data-slide="3">
+      <span class="slide-label">Il tuo top performer</span>
+      <div class="slide-player">
+        <div class="name" id="top-performer-name">-</div>
+        <div class="stats" id="top-performer-stats">FM: -</div>
+      </div>
+      <p class="slide-subtitle">Il migliore della tua rosa 🔥</p>
+    </div>
+
+    <!-- Slide 5: Il Bidone -->
+    <div class="slide slide-2" data-slide="4">
+      <span class="slide-label">Il bidone 🗑️</span>
+      <div class="slide-player">
+        <div class="name" id="worst-roi-name">-</div>
+        <div class="stats" id="worst-roi-stats">-</div>
+      </div>
+      <p class="slide-subtitle">Peggiore vs media del suo ruolo</p>
+    </div>
+
+    <!-- Slide 6: Bonus King -->
+    <div class="slide slide-5" data-slide="5">
+      <span class="slide-label">Re dei Bonus ⚽</span>
+      <div class="slide-player">
+        <div class="name" id="bonus-king-name">-</div>
+        <div class="stats" id="bonus-king-stats">-</div>
+      </div>
+      <p class="slide-subtitle">Gol + Assist</p>
+    </div>
+
+    <!-- Slide 7: Malus King -->
+    <div class="slide slide-4" data-slide="6">
+      <span class="slide-label">Re dei Malus 💀</span>
+      <div class="slide-player">
+        <div class="name" id="malus-king-name">-</div>
+        <div class="stats" id="malus-king-stats">-</div>
+      </div>
+      <div class="percentile-bar">
+        <div class="percentile-fill" id="bar-malus"></div>
+      </div>
+      <p class="slide-subtitle" id="percentile-malus-text">Top X% malus</p>
+    </div>
+
+    <!-- Slide 8: Scout Rating -->
+    <div class="slide slide-3" data-slide="7">
+      <span class="slide-label">Sei uno scouter?</span>
+      <div class="slide-value" id="scout-score">0</div>
+      <p class="slide-subtitle">Scout Score</p>
+      <ul class="gems-list" id="gems-list"></ul>
+    </div>
+
+    <!-- Slide 9: Portiere -->
+    <div class="slide slide-5" data-slide="8">
+      <span class="slide-label">Il tuo portiere 🧤</span>
+      <div class="slide-player">
+        <div class="name" id="top-scorer-name">-</div>
+        <div class="stats" id="top-scorer-stats">-</div>
+      </div>
+    </div>
+
+    <!-- Slide 10: Riepilogo -->
+    <div class="slide slide-1" data-slide="9">
+      <span class="slide-label">Riepilogo</span>
+      <h2 class="slide-title">La tua stagione</h2>
+      <div class="summary-grid" id="summary-grid">
+        <!-- Populated by JS -->
+      </div>
+      <button id="restart-btn" class="btn" style="max-width: 300px; margin-top: 2rem;">Analizza un'altra rosa</button>
+    </div>
+
+    <!-- Navigation -->
+    <div class="nav-dots" id="nav-dots"></div>
+    <div class="nav-arrows">
+      <button class="nav-arrow" id="prev-btn">←</button>
+      <button class="nav-arrow" id="next-btn">→</button>
+    </div>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
