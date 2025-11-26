@@ -193,10 +193,10 @@ function populateWrapped() {
   
   // Slide 2: Performance Rosa (overperformance)
   const perf = data.performance;
-  const overSign = parseFloat(perf.total_overperf) >= 0 ? '+' : '';
+  const overSign = parseFloat(perf.avg_overperf) >= 0 ? '+' : '';
   $('#stat-fvm').textContent = perf.verdict;
   $('#bar-fvm').style.setProperty('--fill', `${Math.min(100, Math.max(0, 50 + parseFloat(perf.avg_overperf) * 50))}%`);
-  $('#percentile-fvm-text').textContent = `${overSign}${perf.total_overperf} overperf totale | ${perf.overperformers}↑ vs ${perf.underperformers}↓`;
+  $('#percentile-fvm-text').textContent = `${perf.overperformers} giocatori sopra media, ${perf.underperformers} sotto`;
   
   // Slide 3: Gol + Assist
   animateNumber($('#stat-fm'), data.stats.total_goals + data.stats.total_assists);
