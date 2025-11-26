@@ -243,7 +243,7 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 2rem;
+  padding: 2rem 2rem 6rem 2rem; /* extra bottom padding for nav dots */
   text-align: center;
   opacity: 0;
   transform: scale(0.9);
@@ -299,10 +299,11 @@ body {
 }
 
 .slide-subtitle {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   opacity: 0.8;
-  margin-top: 1rem;
-  max-width: 80%;
+  margin-top: 0.8rem;
+  max-width: 90%;
+  line-height: 1.4;
 }
 
 /* Player card */
