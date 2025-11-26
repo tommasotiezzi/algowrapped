@@ -187,12 +187,9 @@ function populateWrapped() {
   const data = state.wrappedData;
   if (!data) return;
   
-  // Debug ownership
-  console.log('=== OWNERSHIP DEBUG ===');
+  // Debug
   console.log('Total rosters:', data.scout.total_rosters);
-  console.log('Debug info:', data.scout.debug);
   console.log('Hidden gems:', data.scout.hidden_gems);
-  console.log('========================');
   
   // Slide 2: Performance (overperformance vs media ruolo)
   const perfPercentile = data.percentiles.performance;
@@ -270,14 +267,10 @@ function populateWrapped() {
     const p = data.highlights.portiere;
     $('#top-scorer-name').textContent = p.name;
     
-    // Mostra verdict chiaro
-    const fmInfo = `FM ${p.fm} (${p.fm_diff >= 0 ? '+' : ''}${p.fm_diff} vs media)`;
-    const goalsInfo = `${p.goals_conceded} gol subiti (${p.goals_diff >= 0 ? '+' : ''}${p.goals_diff} vs media)`;
-    
+    const sign = parseFloat(p.fm_diff) >= 0 ? '+' : '';
     $('#top-scorer-stats').innerHTML = `
       ${p.verdict}<br>
-      <small>${fmInfo}</small><br>
-      <small>${goalsInfo}</small>
+      <small>FM ${p.fm} (${sign}${p.fm_diff} vs media ${p.fm_avg})</small>
     `;
   } else {
     $('#top-scorer-name').textContent = 'No portieri';
