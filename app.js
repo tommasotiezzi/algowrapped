@@ -61,6 +61,10 @@ function initEventListeners() {
   elements.nextBtn.addEventListener('click', nextSlide);
   elements.restartBtn.addEventListener('click', restart);
   
+  // Share buttons
+  $('#share-story-btn')?.addEventListener('click', () => shareAsImage('story'));
+  $('#share-slides-btn')?.addEventListener('click', () => shareAsImage('slides'));
+  
   // Keyboard navigation
   document.addEventListener('keydown', (e) => {
     if (!elements.wrappedContainer.classList.contains('active')) return;
@@ -405,3 +409,153 @@ function animateNumber(el, target, decimals = 0) {
 
 // Make loadWrapped available globally for onclick
 window.loadWrapped = loadWrapped;
+
+// ============ SHARE FUNCTIONS ============
+function populateShareTemplate(type) {
+  const data = state.wrappedData;
+  if (!data) return;
+  
+  if (type === 'story') {
+    // Story format (9:16)
+    $('#share-verdict').textContent = data.performance.verdict;
+    
+    $('#share-stats').innerHTML = `
+      <div class="share-stat-item">
+        <div class="share-stat-value">${data.stats.total_goals}</div>
+        <div class="share-stat-label">Gol</div>
+      </div>
+      <div class="share-stat-item">
+        <div class="share-stat-value">${data.stats.total_assists}</div>
+        <div class="share-stat-label">Assist</div>
+      </div>
+      <div class="share-stat-item">
+        <div class="share-stat-value">${data.performance.overperformers}</div>
+        <div class="share-stat-label">Sopra Media</div>
+      </div>
+      <div class="share-stat-item">
+        <div class="share-stat-value">${Math.round(data.scout.score)}</div>
+        <div class="share-stat-label">Scout Score</div>
+      </div>
+    `;
+    
+    const highlights = [];
+    if (data.highlights.top_performer) {
+      highlights.push({
+        label: '🔥 Top Performer',
+        value: data.highlights.top_performer.name
+      });
+    }
+    if (data.highlights.bonus_king) {
+      highlights.push({
+        label: '⚽ Re dei Bonus',
+        value: `${data.highlights.bonus_king.name} (${data.highlights.bonus_king.total})`
+      });
+    }
+    if (data.highlights.portiere) {
+      highlights.push({
+        label: data.highlights.portiere.is_wall ? '🧱 Portiere' : '🥅 Portiere',
+        value: data.highlights.portiere.name
+      });
+    }
+    
+    $('#share-highlights').innerHTML = highlights.map(h => `
+      <div class="share-highlight-item">
+        <span class="share-highlight-label">${h.label}</span>
+        <span class="share-highlight-value">${h.value}</span>
+      </div>
+    `).join('');
+    
+  } else {
+    // Square format (1:1)
+    $('#share-verdict-sq').textContent = data.performance.verdict;
+    
+    $('#share-mini-stats').innerHTML = `
+      <div class="share-mini-stat">
+        <div class="value">${data.stats.total_goals}</div>
+        <div class="label">Gol</div>
+      </div>
+      <div class="share-mini-stat">
+        <div class="value">${data.stats.total_assists}</div>
+        <div class="label">Assist</div>
+      </div>
+      <div class="share-mini-stat">
+        <div class="value">${Math.round(data.scout.score)}</div>
+        <div class="label">Scout</div>
+      </div>
+    `;
+    
+    if (data.highlights.top_performer) {
+      $('#share-top-player').innerHTML = `
+        <div class="label">🔥 TOP PERFORMER</div>
+        <div class="name">${data.highlights.top_performer.name}</div>
+      `;
+    }
+  }
+}
+
+async function shareAsImage(type) {
+  const btn = type === 'story' ? $('#share-story-btn') : $('#share-slides-btn');
+  const originalText = btn.textContent;
+  btn.textContent = '⏳ Generando...';
+  btn.disabled = true;
+  
+  try {
+    // Populate template
+    populateShareTemplate(type);
+    
+    // Select template
+    const templateId = type === 'story' ? 'share-story-template' : 'share-square-template';
+    const template = $(`#${templateId}`);
+    const size = type === 'story' ? { w: 1080, h: 1920 } : { w: 1080, h: 1080 };
+    
+    // Move template into view temporarily for rendering
+    template.style.left = '0';
+    template.style.top = '0';
+    template.style.zIndex = '-1';
+    
+    // Wait for fonts to load
+    await document.fonts.ready;
+    await new Promise(r => setTimeout(r, 100)); // Small delay for rendering
+    
+    // Capture as canvas
+    const canvas = await html2canvas(template, {
+      width: size.w,
+      height: size.h,
+      scale: 1,
+      useCORS: true,
+      backgroundColor: null,
+    });
+    
+    // Hide template again
+    template.style.left = '-9999px';
+    
+    // Convert to blob
+    const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+    const fileName = type === 'story' ? 'fantacalcio-wrapped-story.png' : 'fantacalcio-wrapped-square.png';
+    const file = new File([blob], fileName, { type: 'image/png' });
+    
+    // Try Web Share API (mobile)
+    if (navigator.share && navigator.canShare({ files: [file] })) {
+      await navigator.share({
+        files: [file],
+        title: 'Il mio Fantacalcio Wrapped',
+        text: 'Guarda come è andata la mia stagione! ⚽'
+      });
+    } else {
+      // Fallback: download
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fileName;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+    
+  } catch (err) {
+    console.error('Share error:', err);
+    alert('Errore nella generazione. Riprova!');
+  } finally {
+    btn.textContent = originalText;
+    btn.disabled = false;
+  }
+}
