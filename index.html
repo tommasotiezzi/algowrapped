@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
 
@@ -128,7 +129,41 @@
       <div class="summary-grid" id="summary-grid">
         <!-- Populated by JS -->
       </div>
-      <button id="restart-btn" class="btn" style="max-width: 300px; margin-top: 2rem;">Analizza un'altra rosa</button>
+      <div class="share-buttons">
+        <button id="share-story-btn" class="btn btn-share">📸 Condividi Story</button>
+        <button id="share-slides-btn" class="btn btn-share btn-secondary">🎬 Crea Slides</button>
+      </div>
+      <button id="restart-btn" class="btn btn-restart">Analizza un'altra rosa</button>
+    </div>
+
+    <!-- Hidden: Share Story Template (9:16 aspect ratio) -->
+    <div id="share-story-template" class="share-template share-story">
+      <div class="share-header">
+        <span class="share-logo">⚽ Fantacalcio Wrapped</span>
+      </div>
+      <div class="share-content">
+        <div class="share-verdict" id="share-verdict"></div>
+        <div class="share-stats-grid" id="share-stats"></div>
+        <div class="share-highlights" id="share-highlights"></div>
+      </div>
+      <div class="share-footer">
+        <span>Il mio Fantacalcio 2024/25</span>
+      </div>
+    </div>
+
+    <!-- Hidden: Share Square Template (1:1 for TikTok) -->
+    <div id="share-square-template" class="share-template share-square">
+      <div class="share-header">
+        <span class="share-logo">⚽ Fantacalcio Wrapped</span>
+      </div>
+      <div class="share-content">
+        <div class="share-verdict" id="share-verdict-sq"></div>
+        <div class="share-mini-stats" id="share-mini-stats"></div>
+        <div class="share-top-player" id="share-top-player"></div>
+      </div>
+      <div class="share-footer">
+        <span>2024/25</span>
+      </div>
     </div>
 
     <!-- Navigation -->
